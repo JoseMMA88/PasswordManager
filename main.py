@@ -3,6 +3,7 @@ from tkinter import messagebox
 import pyperclip
 import random
 import string
+import json
 
 
 FONT = ("Verdana", 10, "bold")
@@ -28,6 +29,12 @@ def save_data():
     website = input.get()
     user = input_2.get()
     password = input_3.get()
+    new_data = {
+        website: {
+            "user": user,
+            "password": password
+        }
+    }
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showwarning(title="Campos necesarios", message="Has dejado campos sin rellenar.\n Porfavor rellénelos.")
@@ -36,10 +43,22 @@ def save_data():
                                                       f" Contraseña: {password}\n ¿Son correctos?")
 
         if is_ok:
-            with open("users_data.txt", 'a') as file:
-                file.write(f"{website} | {user} | {password} \n")
-                print("Guardado!!")
+            try:
+                with open("user_data.json", "r") as file:
+                    # Reading old data
+                    data = json.load(file)
+            except FileNotFoundError:
+                with open("user_data.json", "w") as file:
+                    json.dump(data, file, indent=4)
+            else:
+                # Updating data with new data
+                data.update(new_data)
 
+                with open("user_data.json", "w") as file:
+                    # Saving updated data
+                    json.dump(data, file, indent=4)
+            finally:
+                print("Guardado!!")
                 input.delete(0, END)
                 input_3.delete(0, END)
 
