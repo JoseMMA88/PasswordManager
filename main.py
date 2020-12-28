@@ -49,7 +49,7 @@ def save_data():
                     data = json.load(file)
             except FileNotFoundError:
                 with open("user_data.json", "w") as file:
-                    json.dump(data, file, indent=4)
+                    json.dump(new_data, file, indent=4)
             else:
                 # Updating data with new data
                 data.update(new_data)
@@ -61,6 +61,27 @@ def save_data():
                 print("Guardado!!")
                 input.delete(0, END)
                 input_3.delete(0, END)
+
+
+# Search data
+def search():
+    try:
+        website = input.get()
+        with open("user_data.json", "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showwarning(title="Información no encontrada", message=f"No hay información de "
+                                                                          f"{website} en el manejador de contraseñas")
+    else:
+        if website in data:
+            user = data[website]["user"]
+            password = data[website]["password"]
+            messagebox.showwarning(title=website, message=f"Usuario: {user}\n Contraseña: {password}")
+        else:
+            messagebox.showwarning(title="Información no encontrada", message=f"No hay información de "
+                                                                              f"{website} en el manejador de contraseñas")
+
+
 
 
 # UI Setup
@@ -82,7 +103,7 @@ input.focus()
 input.grid(column=1, row=1)
 
 # Search
-button_search = Button(text="Buscar", width=13)
+button_search = Button(text="Buscar", width=13, command=search)
 button_search.grid(column=2, row=1)
 
 # Email / User
